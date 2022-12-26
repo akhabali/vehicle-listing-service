@@ -26,7 +26,7 @@ public class ApplicationEntryPoint {
                         .description("A RESTful service for managing listings for online advertising service.")
                         .version(appVersion)
                         .contact(new Contact().name("Anas Khabali").email("anas.khabali@gmail.com").url("https://github.com/akhabali"))
-                        .license(new License().name("MIT").url("https://github.com/akhabali/vehicle-listing-service/blob/main/LICENSE.md")));
+                        .license(new License().name("MIT").url("https://github.com/akhabali/vehicle-listing-service/blob/main/LICENSE.txt")));
     }
 
 }
