@@ -2,7 +2,6 @@ package io.github.akhabali.controller;
 
 import io.github.akhabali.dto.DealerDto;
 import io.github.akhabali.dto.DealerListDto;
-import io.github.akhabali.errors.DealerNotFoundException;
 import io.github.akhabali.model.Dealer;
 import io.github.akhabali.service.DealerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +35,7 @@ public class DealerController {
      *
      * @param id the identifier to lookup
      * @return dealer with 'id'
-     * @throws DealerNotFoundException when no dealer with 'id' is found
+     * @throws io.github.akhabali.errors.DealerNotFoundException when no dealer with 'id' is found
      */
     @Operation(summary = "Look up a dealer by its ID")
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -66,6 +65,7 @@ public class DealerController {
      *
      * @param dealer dealer information to be used to create a dealer instance
      * @return the freshly created dealer
+     * @throws io.github.akhabali.errors.DealerAlreadyExistsException if dealer with the same id already exists
      */
     @Operation(summary = "Create a new Dealer")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -80,6 +80,7 @@ public class DealerController {
      * Delete dealer with 'id'
      *
      * @param id of dealer to be deleted
+     * @throws io.github.akhabali.errors.DealerNotFoundException if dealer wasn't found
      */
     @Operation(summary = "Delete dealer with 'id'")
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
