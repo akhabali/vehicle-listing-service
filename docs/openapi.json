@@ -143,7 +143,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ListingDto"
+                "$ref": "#/components/schemas/CreateListingDto"
               }
             }
           },
@@ -175,7 +175,67 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListingDto"
+                  "$ref": "#/components/schemas/GetListingDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Listing"
+        ],
+        "summary": "Update a vehicle listing for the dealer identified by 'dealer_id'",
+        "operationId": "updateListing",
+        "parameters": [
+          {
+            "name": "dealer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateListingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetListingDto"
                 }
               }
             }
@@ -305,7 +365,19 @@
           }
         }
       },
-      "ListingDto": {
+      "CreateListingDto": {
+        "type": "object",
+        "properties": {
+          "vehicle": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "GetListingDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -329,6 +401,22 @@
               "draft",
               "published"
             ]
+          }
+        }
+      },
+      "UpdateListingDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "vehicle": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
           }
         }
       },

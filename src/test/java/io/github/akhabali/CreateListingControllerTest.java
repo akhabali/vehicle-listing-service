@@ -1,7 +1,9 @@
 package io.github.akhabali;
 
+import io.github.akhabali.dto.CreateListingDto;
+import io.github.akhabali.dto.UpdateListingDto;
 import io.github.akhabali.dto.ErrorDto;
-import io.github.akhabali.dto.ListingDto;
+import io.github.akhabali.dto.GetListingDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +14,7 @@ import static io.github.akhabali.model.ListingState.draft;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ListingControllerTest {
+public class CreateListingControllerTest {
     @Value(value = "${local.server.port}")
     private int port;
 
@@ -24,10 +26,10 @@ public class ListingControllerTest {
     public void createListingValidTest() {
         //Given
         Long dealerId = 1L;
-        ListingDto newListing = new ListingDto(dealerId, "serie 1", 32000D);
+        CreateListingDto newListing = new CreateListingDto("serie 1", 32000D);
 
         //When
-        ListingDto response = this.restTemplate.postForObject("http://localhost:" + port + "/dealers/" + dealerId + "/listing", newListing, ListingDto.class);
+        GetListingDto response = this.restTemplate.postForObject("http://localhost:" + port + "/dealers/" + dealerId + "/listing", newListing, GetListingDto.class);
 
         //Then
         assertThat(response).isNotNull();
@@ -40,7 +42,7 @@ public class ListingControllerTest {
     public void createListingWithWrongDealerTest() {
         //Given
         Long dealerId = 99L;
-        ListingDto newListing = new ListingDto(dealerId, "serie 1", 32000D);
+        CreateListingDto newListing = new CreateListingDto("serie 1", 32000D);
 
         //When
         ErrorDto response = this.restTemplate.postForObject("http://localhost:" + port + "/dealers/" + dealerId + "/listing", newListing, ErrorDto.class);
@@ -48,22 +50,7 @@ public class ListingControllerTest {
         //Then
         assertThat(response).isNotNull();
         assertThat(response.getMessage()).isNotEmpty();
-        assertThat(response.getMessage()).contains("No dealer was found with id="+dealerId);
+        assertThat(response.getMessage()).contains("No dealer was found with id=" + dealerId);
     }
 
-    @Test
-    public void createListingWithIdTest() {
-        //Given
-        Long dealerId = 1L;
-        ListingDto newListing = new ListingDto(dealerId, "serie 1", 32000D);
-        newListing.setId(1L);
-
-        //When
-        ErrorDto response = this.restTemplate.postForObject("http://localhost:" + port + "/dealers/" + dealerId + "/listing", newListing, ErrorDto.class);
-
-        //Then
-        assertThat(response).isNotNull();
-        assertThat(response.getMessage()).isNotEmpty();
-        assertThat(response.getMessage()).contains("Dealer's listing already exists with id="+dealerId);
-    }
 }
