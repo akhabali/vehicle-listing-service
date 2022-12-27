@@ -6,6 +6,10 @@ A RESTful service for managing listings for online advertising service.
 
 Check the API documentation here https://akhabali.github.io/vehicle-listing-service/
 
+The service provides a RESTful API for the following resources:
+* Dealers (CRUD)
+* Vehicle Listings (CRUD)
+
 # Getting Started
 
 ## How To Run
