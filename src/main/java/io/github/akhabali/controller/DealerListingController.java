@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 @Log4j2
 @RestController
 @RequestMapping("/dealers/{dealer_id}")
-@Tag(name = "Listing", description = "Dealer Car Listing Service")
+@Tag(name = "Dealer Listing", description = "Manage vehicle listing of a dealer")
 @RequiredArgsConstructor
-public class ListingController {
+public class DealerListingController {
 
     private final ModelMapper modelMapper;
 
