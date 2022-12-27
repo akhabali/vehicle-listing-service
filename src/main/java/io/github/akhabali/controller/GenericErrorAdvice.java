@@ -1,10 +1,7 @@
 package io.github.akhabali.controller;
 
 import io.github.akhabali.dto.ErrorDto;
-import io.github.akhabali.errors.DealerAlreadyExistsException;
-import io.github.akhabali.errors.DealerNotFoundException;
-import io.github.akhabali.errors.ListingAlreadyExistsException;
-import io.github.akhabali.errors.ListingNotFoundException;
+import io.github.akhabali.errors.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -50,6 +47,14 @@ public class GenericErrorAdvice {
     @ExceptionHandler({ListingAlreadyExistsException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorDto listingAlreadyExists(ListingAlreadyExistsException ex) {
+        log.debug("Error: ", ex);
+        return new ErrorDto(ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler({ListingTierLimitExceeded.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDto listingLimitExceeded(ListingTierLimitExceeded ex) {
         log.debug("Error: ", ex);
         return new ErrorDto(ex.getMessage());
     }

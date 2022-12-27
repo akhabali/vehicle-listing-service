@@ -2,6 +2,8 @@ package io.github.akhabali.service;
 
 import io.github.akhabali.errors.ListingAlreadyExistsException;
 import io.github.akhabali.errors.ListingNotFoundException;
+import io.github.akhabali.errors.ListingTierLimitExceeded;
+import io.github.akhabali.model.Dealer;
 import io.github.akhabali.model.Listing;
 import io.github.akhabali.model.ListingState;
 import io.github.akhabali.repository.ListingRepository;
@@ -48,5 +50,35 @@ public class ListingService {
 
         return listingRepository.findListingByDealerIdAndState(dealerId, state);
 
+    }
+
+    public Listing publishListing(Long listingId, boolean forcePublish) {
+        Listing listing = listingRepository.findById(listingId).orElseThrow(() -> new ListingNotFoundException(listingId));
+        // check listing state
+        if (ListingState.published.equals(listing.getState())) {
+            return listing; // nothing to do
+        }
+
+        // check tier limit
+        Dealer dealer = listing.getDealer();
+        Long publishedListingCount = listingRepository.countListingByDealerAndState(dealer.getId(), ListingState.published);
+        Long tierLimit = dealer.getTierLimit();
+
+        if (publishedListingCount >= tierLimit) {
+            if (!forcePublish) {
+                throw new ListingTierLimitExceeded(dealer.getId());
+            }
+
+            // unpublish the oldest listing
+            Listing oldestListing = listingRepository.findOldestListing(dealer.getId(), ListingState.published);
+            oldestListing.setState(ListingState.draft);
+            listingRepository.save(oldestListing);
+        }
+
+        // update listing state
+        listing.setState(ListingState.published);
+
+        //save to db
+        return listingRepository.save(listing);
     }
 }
