@@ -22,6 +22,10 @@
   ],
   "tags": [
     {
+      "name": "Listing",
+      "description": "Dealer Car Listing Service"
+    },
+    {
       "name": "Dealer",
       "description": "Dealer Service"
     }
@@ -35,8 +39,8 @@
         "summary": "Look up for all dealers",
         "operationId": "findAll",
         "responses": {
-          "404": {
-            "description": "Not Found",
+          "409": {
+            "description": "Conflict",
             "content": {
               "*/*": {
                 "schema": {
@@ -45,8 +49,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -84,8 +88,8 @@
           "required": true
         },
         "responses": {
-          "404": {
-            "description": "Not Found",
+          "409": {
+            "description": "Conflict",
             "content": {
               "*/*": {
                 "schema": {
@@ -94,8 +98,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -110,6 +114,68 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DealerDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dealers/{dealer_id}/listing": {
+      "post": {
+        "tags": [
+          "Listing"
+        ],
+        "summary": "Create a new vehicle listing for the dealer identified by 'dealer_id'",
+        "operationId": "newListing",
+        "parameters": [
+          {
+            "name": "dealer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingDto"
                 }
               }
             }
@@ -136,8 +202,8 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "Not Found",
+          "409": {
+            "description": "Conflict",
             "content": {
               "*/*": {
                 "schema": {
@@ -146,8 +212,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -186,8 +252,8 @@
           }
         ],
         "responses": {
-          "404": {
-            "description": "Not Found",
+          "409": {
+            "description": "Conflict",
             "content": {
               "*/*": {
                 "schema": {
@@ -196,8 +262,8 @@
               }
             }
           },
-          "409": {
-            "description": "Conflict",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -236,6 +302,33 @@
           "tierLimit": {
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "ListingDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dealerId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "vehicle": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
           }
         }
       },
