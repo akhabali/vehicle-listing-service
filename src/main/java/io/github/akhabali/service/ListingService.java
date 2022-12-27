@@ -81,4 +81,15 @@ public class ListingService {
         //save to db
         return listingRepository.save(listing);
     }
+
+    public void unpublishListing(Long listingId) {
+        Listing listing = listingRepository.findById(listingId).orElseThrow(() -> new ListingNotFoundException(listingId));
+        // check listing state
+        if (ListingState.draft.equals(listing.getState())) {
+            return; // nothing to do
+        }
+
+        listing.setState(ListingState.draft);
+        listingRepository.save(listing);
+    }
 }
