@@ -76,7 +76,6 @@ public class ListingController {
      */
     @Operation(summary = "Get all vehicle listings of a dealer with a given state")
     @GetMapping(path = "/listing", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
     public DealerListingDto findListingByDealerId(@PathVariable("dealer_id") Long dealerId, @RequestParam("state") ListingState state) {
         return new DealerListingDto(listingService.findListingByDealerId(dealerId, state)
                 .stream()
