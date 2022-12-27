@@ -1,9 +1,11 @@
 package io.github.akhabali.controller;
 
-import io.github.akhabali.dto.ListingDto;
+import io.github.akhabali.dto.CreateListingDto;
+import io.github.akhabali.dto.GetListingDto;
+import io.github.akhabali.dto.UpdateListingDto;
+import io.github.akhabali.errors.DealerNotFoundException;
 import io.github.akhabali.model.Dealer;
 import io.github.akhabali.model.Listing;
-import io.github.akhabali.model.ListingState;
 import io.github.akhabali.service.DealerService;
 import io.github.akhabali.service.ListingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,46 +33,68 @@ public class ListingController {
     private final DealerService dealerService;
     private final ListingService listingService;
 
+
     /**
      * Create a new vehicle listing for the dealer identified by 'dealer_id'
      * <p>
      * All the created listings should have state draft by default;
      *
-     * @param dealerId   the id of the dealer
-     * @param newListing vehicle information to be used to create the listing
+     * @param dealerId the id of the dealer
+     * @param listing  vehicle information to be used to create the listing
      * @return the freshly created listing
      */
     @Operation(summary = "Create a new vehicle listing for the dealer identified by 'dealer_id'")
     @PostMapping(path = "/listing", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ListingDto newListing(@PathVariable("dealer_id") Long dealerId, @RequestBody ListingDto newListing) {
-        return convertToDto(listingService.createListing(convertToEntity(newListing)));
+    public GetListingDto newListing(@PathVariable("dealer_id") Long dealerId, @RequestBody CreateListingDto listing) {
+        return convertToDto(listingService.createListing(convertToEntity(dealerId, listing)));
     }
 
-    private ListingDto convertToDto(Listing listing) {
-        return modelMapper.map(listing, ListingDto.class);
+    /**
+     * Update a vehicle listing for the dealer identified by 'dealer_id'
+     *
+     * @param dealerId the id of the dealer
+     * @param listing  vehicle information to be used to create the listing
+     */
+    @Operation(summary = "Update a vehicle listing for the dealer identified by 'dealer_id'")
+    @PatchMapping(path = "/listing", produces = MediaType.APPLICATION_JSON_VALUE)
+    public GetListingDto updateListing(@PathVariable("dealer_id") Long dealerId, @RequestBody UpdateListingDto listing) {
+        return convertToDto(listingService.updateListing(convertToEntity(dealerId, listing)));
     }
 
-    private Listing convertToEntity(ListingDto listingDto) {
+    private GetListingDto convertToDto(Listing listing) {
+        return modelMapper.map(listing, GetListingDto.class);
+    }
+
+    private Listing convertToEntity(Long dealerId, CreateListingDto listingDto) {
         Listing listing = modelMapper.map(listingDto, Listing.class);
 
-        if (listingDto.getDealerId() != null) {
-            Dealer dealer = dealerService.findById(listingDto.getDealerId());
-            listing.setDealer(dealer);
-        } else {
-            //TODO: handle error
+        if (dealerId == null) {
+            throw new DealerNotFoundException(0L); // TODO: create a specific error if a different message is needed
         }
 
-        // set created time and default state for new listing
-        if (listingDto.getId() == null) {
-            listing.setState(ListingState.draft);
-            listing.setCreatedAt(System.currentTimeMillis());
-        } else {
-            Listing oldListing = listingService.findById(listingDto.getId());
-            listing.setId(oldListing.getId());
-        }
-
+        final Dealer dealer = dealerService.findById(dealerId);
+        listing.setDealer(dealer);
 
         return listing;
     }
+
+    private Listing convertToEntity(Long dealerId, UpdateListingDto listingDto) {
+        Listing listing = modelMapper.map(listingDto, Listing.class);
+
+        if (dealerId == null) {
+            throw new DealerNotFoundException(0L); // TODO: create a specific error if a different message is needed
+        }
+        final Dealer dealer = dealerService.findById(dealerId);
+        listing.setDealer(dealer);
+
+        if (listingDto.getId() != null) {
+            Listing oldListing = listingService.findById(listingDto.getId());
+            listing.setId(oldListing.getId());
+            listing.setCreatedAt(oldListing.getCreatedAt());
+        }
+
+        return listing;
+    }
+
 }

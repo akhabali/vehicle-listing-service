@@ -1,6 +1,5 @@
 package io.github.akhabali.dto;
 
-import io.github.akhabali.model.ListingState;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,18 +15,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ListingDto {
+public class UpdateListingDto {
 
     private Long id;
-    private Long dealerId;
     private String vehicle;
     private Double price;
-    private ListingState state;
 
-    public ListingDto(Long dealerId, String vehicle, Double price) {
-        this.dealerId = dealerId;
+
+    public UpdateListingDto(Long id, String vehicle, Double price) {
+        this.id = id;
         this.vehicle = vehicle;
         this.price = price;
-        state = ListingState.draft;
     }
 }
