@@ -1,11 +1,13 @@
 package io.github.akhabali.controller;
 
 import io.github.akhabali.dto.CreateListingDto;
+import io.github.akhabali.dto.DealerListingDto;
 import io.github.akhabali.dto.GetListingDto;
 import io.github.akhabali.dto.UpdateListingDto;
 import io.github.akhabali.errors.DealerNotFoundException;
 import io.github.akhabali.model.Dealer;
 import io.github.akhabali.model.Listing;
+import io.github.akhabali.model.ListingState;
 import io.github.akhabali.service.DealerService;
 import io.github.akhabali.service.ListingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +18,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 /**
  * Listing controller: The entry point to the operations authorized on a dealer listing
@@ -28,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 public class ListingController {
 
     private final ModelMapper modelMapper;
-
 
     private final DealerService dealerService;
     private final ListingService listingService;
@@ -43,7 +46,7 @@ public class ListingController {
      * @param listing  vehicle information to be used to create the listing
      * @return the freshly created listing
      */
-    @Operation(summary = "Create a new vehicle listing for the dealer identified by 'dealer_id'")
+    @Operation(summary = "Create a new vehicle listing for a dealer")
     @PostMapping(path = "/listing", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public GetListingDto newListing(@PathVariable("dealer_id") Long dealerId, @RequestBody CreateListingDto listing) {
@@ -56,10 +59,29 @@ public class ListingController {
      * @param dealerId the id of the dealer
      * @param listing  vehicle information to be used to create the listing
      */
-    @Operation(summary = "Update a vehicle listing for the dealer identified by 'dealer_id'")
+    @Operation(summary = "Update a vehicle listing of a dealer")
     @PatchMapping(path = "/listing", produces = MediaType.APPLICATION_JSON_VALUE)
     public GetListingDto updateListing(@PathVariable("dealer_id") Long dealerId, @RequestBody UpdateListingDto listing) {
         return convertToDto(listingService.updateListing(convertToEntity(dealerId, listing)));
+    }
+
+    /**
+     * Get all listings of a dealer with a given state
+     * <p>
+     * All the created listings should have state draft by default;
+     *
+     * @param dealerId the id of the dealer
+     * @param state    listing state
+     * @return the freshly created listing
+     */
+    @Operation(summary = "Get all vehicle listings of a dealer with a given state")
+    @GetMapping(path = "/listing", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public DealerListingDto findListingByDealerId(@PathVariable("dealer_id") Long dealerId, @RequestParam("state") ListingState state) {
+        return new DealerListingDto(listingService.findListingByDealerId(dealerId, state)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList()));
     }
 
     private GetListingDto convertToDto(Listing listing) {
