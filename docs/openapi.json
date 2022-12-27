@@ -39,8 +39,8 @@
         "summary": "Look up for all dealers",
         "operationId": "findAll",
         "responses": {
-          "409": {
-            "description": "Conflict",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -49,8 +49,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "409": {
+            "description": "Conflict",
             "content": {
               "*/*": {
                 "schema": {
@@ -88,8 +88,8 @@
           "required": true
         },
         "responses": {
-          "409": {
-            "description": "Conflict",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -98,8 +98,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "409": {
+            "description": "Conflict",
             "content": {
               "*/*": {
                 "schema": {
@@ -122,11 +122,73 @@
       }
     },
     "/dealers/{dealer_id}/listing": {
+      "get": {
+        "tags": [
+          "Listing"
+        ],
+        "summary": "Get all vehicle listings of a dealer with a given state",
+        "operationId": "findListingByDealerId",
+        "parameters": [
+          {
+            "name": "dealer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "published"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DealerListingDto"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "Listing"
         ],
-        "summary": "Create a new vehicle listing for the dealer identified by 'dealer_id'",
+        "summary": "Create a new vehicle listing for a dealer",
         "operationId": "newListing",
         "parameters": [
           {
@@ -150,8 +212,8 @@
           "required": true
         },
         "responses": {
-          "409": {
-            "description": "Conflict",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -160,8 +222,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "409": {
+            "description": "Conflict",
             "content": {
               "*/*": {
                 "schema": {
@@ -186,7 +248,7 @@
         "tags": [
           "Listing"
         ],
-        "summary": "Update a vehicle listing for the dealer identified by 'dealer_id'",
+        "summary": "Update a vehicle listing of a dealer",
         "operationId": "updateListing",
         "parameters": [
           {
@@ -210,8 +272,8 @@
           "required": true
         },
         "responses": {
-          "409": {
-            "description": "Conflict",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -220,8 +282,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "409": {
+            "description": "Conflict",
             "content": {
               "*/*": {
                 "schema": {
@@ -262,8 +324,8 @@
           }
         ],
         "responses": {
-          "409": {
-            "description": "Conflict",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -272,8 +334,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "409": {
+            "description": "Conflict",
             "content": {
               "*/*": {
                 "schema": {
@@ -312,8 +374,8 @@
           }
         ],
         "responses": {
-          "409": {
-            "description": "Conflict",
+          "404": {
+            "description": "Not Found",
             "content": {
               "*/*": {
                 "schema": {
@@ -322,8 +384,8 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found",
+          "409": {
+            "description": "Conflict",
             "content": {
               "*/*": {
                 "schema": {
@@ -427,6 +489,17 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DealerDto"
+            }
+          }
+        }
+      },
+      "DealerListingDto": {
+        "type": "object",
+        "properties": {
+          "listings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetListingDto"
             }
           }
         }
