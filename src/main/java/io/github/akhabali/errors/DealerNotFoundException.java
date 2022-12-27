@@ -6,6 +6,6 @@ package io.github.akhabali.errors;
 public class DealerNotFoundException extends RuntimeException {
 
     public DealerNotFoundException(Long id) {
-        super("No resource was found with id=" + id);
+        super("No dealer was found with id=" + id);
     }
 }
