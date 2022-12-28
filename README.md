@@ -11,6 +11,7 @@ The service provides a RESTful API for the following resources:
 * Vehicle Listings (CRUD)
 
 To check how this was build, see the merged PR list:
+
 https://github.com/akhabali/vehicle-listing-service/pulls?q=is%3Apr+is%3Aclosed
 
 
@@ -31,7 +32,7 @@ This repo uses:
 ### Requirement
 
 * Java 17: please download and setup `JAVA_HOME` https://adoptium.net/download/
-* Download the released fat jar from this repository package https://github.com/akhabali/vehicle-listing-service/packages/1759566
+* Download the released fat jar from this repository package https://github.com/akhabali/vehicle-listing-service/releases/tag/v0.0.1
 
 Run the following command
 
